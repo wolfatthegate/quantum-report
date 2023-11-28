@@ -1,6 +1,5 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
-
 \title{Quantum Computing for Drug Discovery Challenge at ICCAD}
 \author{Priyabrata Senapati, Waylon Luo and Zixu Wang}
 \date{November 2023}
@@ -48,22 +47,113 @@ Solving the Schrödinger equation allows one to find the eigenstates (or station
 
 \section{Methods}
 
+To find the ground state energy with provided Hamiltonian, we utilize Qiskit framework. Qiskit is an open-source python package for quantum computing developed by IBM. 
 
+In our first approach, we mainly focused on Variational Quantum Eigensolver (VQE) algorithms that optimize the ground state energy while other parameters such as seeds, iterations, and shots, and other modules such as ansatz design, noise model and circuit designs.
+
+Then the optimization is conducted in four aspects combined. 
+
+\subsection{Ansatz Design}
+Our initial suggestion involves employing a hardware-efficient ansatz that utilizes the native gates of the specified device and is compatible with the device's coupling map, allowing for the direct construction of the ansatz. Additionally, we employ the QuantumNAS \cite{QuantumNAS2022} technique to explore and identify an ansatz that adequately meets the requirements for the given Hamiltonian, considering factors such as depth and the number of parameters. 
+
+\subsection{Parameter Training}
+
+We introduce a novel approach called ResilienQ \cite{ResilienQ2023}, which conducts parameter training with sensitivity to noise by incorporating feedback from the noisy simulator. Additionally, we implement quantum gate pruning, removing gates with rotation angles close to zero. Moreover, when a gate exhibits an angle near 180 degrees, we substitute it with the corresponding non-parameterized gate, such as replacing RX(pi) with X, aiming to reduce circuit depth.
+
+\subsection{Noise Mitigation}
+We conduct qubit mapping with sensitivity to noise, choosing an optimal qubit set based on noise calibration information. Additionally, we mitigate measurement noise using the 0-1 measurement error matrix derived from noise calibration. To further minimize incoherence errors, we employ the Zero Noise Extrapolation (ZNE) \cite{mitiq2022}.
+
+\subsection{VQE-Specific Optimizations}
+We employ the Pauli string grouping technique to decrease the necessary number of measurements. Introducing a novel approach, we distribute shots based on the coefficients of the Pauli strings, aiming to minimize the overall variance in results. Inspired by the observation that numerous coefficients are close to zero, and drawing insights from the JigSaw and VarSaw papers, we also suggest Pauli string pruning, involving the removal of groups with small coefficients.
 
 \section{Results}
 
+Random circuit, Fixed iterations = 125 and shots = 6000
+\begin{center}
+\scriptsize
+\begin{tabular}{||c c c c c||} 
+ \hline
+ Opt Function & error rate & duration & actual runtime & seed \\ [0.5ex] 
+ \hline\hline
+ADAM & 32.19662 & 19474048 & 44.61 & 20\\
+ADAM & 31.546827 & 21881440 & 45.1 & 21\\
+ADAM & 34.3473 & 20862016 & 39.336 & 170\\
+CG (unconstrained optimizer) & 32.19662 & 19773280 & 43.08 & 20\\
+CG (unconstrained optimizer) & 31.54683 & 15895296 & 42.94 & 21\\
+CG (unconstrained optimizer) & 34.347 & 18019136 & 35.9176 & 170\\
+COBYLA & 48.762934 &  & 312.216 & 170\\
+L-BFGS-B & 34.347342 & 20632128 & 36.608 & 170\\
+NELDER-MEAD & 34.47613 & 21250496 & 415.5 & 170\\
+NFT & 34.3473 & 20023264 & 601.59 & 170\\
+SLSQP & 34.3473 & 19022368 & & 170 \\[1ex] 
+ \hline
+
+\end{tabular}
+\end{center}
+
+\subsection{SciPyOptimizer's unconstrained optimizer methods}  
+Random circuit, Fixed Seed = 170, iterations = 125 and shots = 6000
+\begin{center}
+\scriptsize
+\begin{tabular}{||c c c||} 
+ \hline
+ Opt Function & error rate & duration \\ [0.5ex] 
+ \hline\hline
+trust-constr & 34.3473 & 19974816 \\
+L-BFGS-B-Modified & 34.3473 & 20573504 \\
+ADAM-Modified & 34.3473 & 19569888 \\
+CG-Modified & 34.3473 & 18642016 \\ [1ex] 
+ \hline
+
+\end{tabular}
+\end{center}
+
+\subsection{Global Optimizers}
+Random circuit, Fixed Seed = 170, iterations = 125 and shots = 6000
+\begin{center}
+\scriptsize
+\begin{tabular}{||c c c||} 
+ \hline
+ Opt Function & error rate & duration\\ [0.5ex] 
+ \hline\hline
+CRS & 34.3473 & 21233344 \\
+Direct-L-RAND & 34.3473 & 21288032 \\
+DIRECT-L & 46.9032 & 20980224 \\
+ESCH & 34.3473 & 21262304 \\
+ISRES & 34.3473 & 18352064 \\[1ex] 
+ \hline
+
+\end{tabular}
+\end{center}
+
+\subsection{The Optimal Result}
+
+\begin{center}
+\scriptsize
+\begin{tabular}{||c c c c c||} 
+ \hline
+ Noise Model & pulse duration & shots & Score & Variance  \\ [0.5ex] 
+ \hline\hline
+fakecairo & 96 & 1800000.0 & 99.89092 & 0.00295 \\
+fakekolkata & 160 & 1800000.0 & 99.88718 & 0.00217 \\
+fakemontreal & 160 & 1800000.0 & 99.88647 & 0.00274 \\[1ex] 
+ \hline
+\end{tabular}
+\end{center}
+
+
 \section{Conclusion}
-The intersection of quantum computing and drug discovery, as exemplified by the exploration of the hydroxyl cation (·OH) in this challenge, holds tremendous promise for advancing our understanding of molecular interactions and revolutionizing therapeutic development. The rapid progress in drug discovery heavily relies on cutting-edge technologies, and the integration of quantum computing with machine learning presents a transformative approach.
+%The intersection of quantum computing and drug discovery, as exemplified by the exploration of the hydroxyl cation (·OH) in this challenge, holds tremendous promise for advancing our understanding of molecular interactions and revolutionizing therapeutic development. The rapid progress in drug discovery heavily relies on cutting-edge technologies, and the integration of quantum computing with machine learning presents a transformative approach.
 
-The detailed examination of the hydroxyl cation's quantum mechanics has showcased its significance in pharmacology, not only as a pivotal molecule in drug interactions but also in influencing the effectiveness of various medications. Quantum computing provides a unique opportunity to overcome classical computational limitations, offering avenues to predict and comprehend molecular behaviors with unprecedented accuracy.
+%The detailed examination of the hydroxyl cation's quantum mechanics has showcased its significance in pharmacology, not only as a pivotal molecule in drug interactions but also in influencing the effectiveness of various medications. Quantum computing provides a unique opportunity to overcome classical computational limitations, offering avenues to predict and comprehend molecular behaviors with unprecedented accuracy.
 
-The 2023 Challenge, focused on computing the ground state energy of the hydroxyl cation, encourages participants to explore innovative solutions. The emphasis on effective qubit mapping, co-designed hardware and software optimization, and the integration of AI/ML and scientific-based approaches highlights the multifaceted strategies needed for success in quantum simulations.
+%The 2023 Challenge, focused on computing the ground state energy of the hydroxyl cation, encourages participants to explore innovative solutions. The emphasis on effective qubit mapping, co-designed hardware and software optimization, and the integration of AI/ML and scientific-based approaches highlights the multifaceted strategies needed for success in quantum simulations.
 
-The provided dataset, centered on the hydroxyl cation's Hamiltonian, underscores the importance of nuanced comprehension in drug discovery. The utilization of specialized data, adhering to the Jordan-Wigner mapping, presents a challenge that aligns with the current capabilities of quantum computing while pushing the boundaries of research.
+%The provided dataset, centered on the hydroxyl cation's Hamiltonian, underscores the importance of nuanced comprehension in drug discovery. The utilization of specialized data, adhering to the Jordan-Wigner mapping, presents a challenge that aligns with the current capabilities of quantum computing while pushing the boundaries of research.
 
-As the field progresses, addressing challenges such as qubit limitations and quantum error rates remains imperative for comprehensive simulations of larger drug molecules. The manageable size of the hydroxyl cation becomes advantageous in this context, serving as an ideal candidate for quantum simulation challenges and laying the groundwork for scalable solutions in future research.
+%As the field progresses, addressing challenges such as qubit limitations and quantum error rates remains imperative for comprehensive simulations of larger drug molecules. The manageable size of the hydroxyl cation becomes advantageous in this context, serving as an ideal candidate for quantum simulation challenges and laying the groundwork for scalable solutions in future research.
 
-In summary, the 2023 Challenge provides a platform to advance the synergy between quantum computing and drug discovery. By fostering innovation and collaboration, this endeavor contributes to the ongoing dialogue in quantum chemistry, offering insights that may reshape the landscape of pharmaceutical research and development.
+%In summary, the 2023 Challenge provides a platform to advance the synergy between quantum computing and drug discovery. By fostering innovation and collaboration, this endeavor contributes to the ongoing dialogue in quantum chemistry, offering insights that may reshape the landscape of pharmaceutical research and development.
 
 \bibliographystyle{plainurl}
 \bibliography{bibliography}
