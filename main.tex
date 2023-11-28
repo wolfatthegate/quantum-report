@@ -21,6 +21,7 @@ Given its significance, a detailed understanding of the quantum mechanics of the
 \includegraphics[width=4cm]{Images/Hydroxyl3D.png}
 \includegraphics[width=2.5cm]{Images/Hydroxyl-OH.png}
 \caption{Molecular Structure of Hydroxyl Cation}
+\label{fig:molecularOH}
 \end{figure}
 
 \section{Objective}
@@ -38,6 +39,27 @@ The data presented in this challenge is centered on drug discovery, specifically
 The data is presented in text format, with the text file encompassing both the Pauli strings and their corresponding coefficients for the hydroxyl cation's Hamiltonian, employing the Jordan-Wigner mapping \cite{Tranter2018}. While participants are free to employ their preferred tools to generate varied descriptions of the hydroxyl cation's Hamiltonian, it's important to note that we've constrained the fermionic mapping method to adhere to the Jordan-Wigner mapping \cite{Tranter2018}. This constraint specifically entails the utilization of 12 qubits and the inclusion of 631 Pauli strings.
 
 \section{Background}
+
+\subsection{The Ground State Energy}
+
+The ground state energy of the hydroxyl cation can be calculated from its molecular structure shown in Figure \ref{fig:molecularOH}. 
+
+Given computed energy = -78.75252123 eV, nuclear repulsion energy =  4.36537496654537 eV, we obtained reference ground state energy = -74.38714627 eV.
+
+The score of the result is calculated by the following equation. 
+
+\begin{equation}
+E_{score} = \left(1 - \|\frac{E_{estimated} - E_{ideal}}{E_{ideal}}\|\right) \times 100\%
+\end{equation}
+
+In our case, $E_{ideal}$ is -74.38714627 eV. 
+
+\subsection{Ansatz}
+
+An ansatz is a trial state or wavefunction that serves as a starting point for approximations or optimizations. It's a parameterized quantum state that's used as an educated guess for solving a problem. For example, an ansatz can be used to find the ground state of a quantum system.
+
+An ansatz circuit is a parameterized circuit that's used to prepare a trial state for a problem. In a variational algorithm, the trial state encodes the solution and is updated until a termination criterion is met. 
+
 \subsection{Hamiltonian}
 A Hamiltonian is a fundamental concept associated with the energy of a quantum system. The Hamiltonian operator, often denoted as H, is a mathematical representation of the total energy of a quantum system, and it plays a crucial role in quantum mechanics and quantum computing. 
 
@@ -73,19 +95,19 @@ Random circuit, Fixed iterations = 125 and shots = 6000
 \scriptsize
 \begin{tabular}{||c c c c c||} 
  \hline
- Opt Function & error rate & duration & actual runtime & seed \\ [0.5ex] 
+ Opt Function & duration  & Score & actual runtime & seed \\ [0.5ex] 
  \hline\hline
-ADAM & 32.19662 & 19474048 & 44.61 & 20\\
-ADAM & 31.546827 & 21881440 & 45.1 & 21\\
-ADAM & 34.3473 & 20862016 & 39.336 & 170\\
-CG (unconstrained optimizer) & 32.19662 & 19773280 & 43.08 & 20\\
-CG (unconstrained optimizer) & 31.54683 & 15895296 & 42.94 & 21\\
-CG (unconstrained optimizer) & 34.347 & 18019136 & 35.9176 & 170\\
-COBYLA & 48.762934 &  & 312.216 & 170\\
-L-BFGS-B & 34.347342 & 20632128 & 36.608 & 170\\
-NELDER-MEAD & 34.47613 & 21250496 & 415.5 & 170\\
-NFT & 34.3473 & 20023264 & 601.59 & 170\\
-SLSQP & 34.3473 & 19022368 & & 170 \\[1ex] 
+ADAM & 19474048  & 32.19662 & 44.61 & 20\\
+ADAM & 21881440  & 31.546827 & 45.1 & 21\\
+ADAM & 20862016  & 34.3473 & 39.336 & 170\\
+CG (unconstrained optimizer) & 19773280  & 32.19662 & 43.08 & 20\\
+CG (unconstrained optimizer) & 15895296  & 31.54683 & 42.94 & 21\\
+CG (unconstrained optimizer) & 18019136  & 34.347 & 35.9176 & 170\\
+COBYLA &   & 48.762934 & 312.216 & 170\\
+L-BFGS-B  & 20632128 & 34.347342 & 36.608 & 170\\
+NELDER-MEAD & 21250496 & 34.47613 & 415.5 & 170\\
+NFT & 20023264  & 34.3473 & 601.59 & 170\\
+SLSQP & 19022368 & 34.3473 & & 170 \\[1ex] 
  \hline
 
 \end{tabular}
@@ -97,12 +119,12 @@ Random circuit, Fixed Seed = 170, iterations = 125 and shots = 6000
 \scriptsize
 \begin{tabular}{||c c c||} 
  \hline
- Opt Function & error rate & duration \\ [0.5ex] 
+ Opt Function & duration & Score\\ [0.5ex] 
  \hline\hline
-trust-constr & 34.3473 & 19974816 \\
-L-BFGS-B-Modified & 34.3473 & 20573504 \\
-ADAM-Modified & 34.3473 & 19569888 \\
-CG-Modified & 34.3473 & 18642016 \\ [1ex] 
+trust-constr & 19974816 & 34.3473\\
+L-BFGS-B-Modified & 20573504 & 34.3473\\
+ADAM-Modified & 19569888 & 34.3473\\
+CG-Modified & 18642016 & 34.3473\\ [1ex] 
  \hline
 
 \end{tabular}
@@ -114,13 +136,13 @@ Random circuit, Fixed Seed = 170, iterations = 125 and shots = 6000
 \scriptsize
 \begin{tabular}{||c c c||} 
  \hline
- Opt Function & error rate & duration\\ [0.5ex] 
+ Opt Function & duration & Score \\ [0.5ex] 
  \hline\hline
-CRS & 34.3473 & 21233344 \\
-Direct-L-RAND & 34.3473 & 21288032 \\
-DIRECT-L & 46.9032 & 20980224 \\
-ESCH & 34.3473 & 21262304 \\
-ISRES & 34.3473 & 18352064 \\[1ex] 
+CRS & 21233344 & 34.3473 \\
+Direct-L-RAND & 21288032  & 34.3473\\
+DIRECT-L & 20980224  & 46.9032\\
+ESCH & 21262304  & 34.3473\\
+ISRES & 18352064  & 34.3473\\[1ex] 
  \hline
 
 \end{tabular}
@@ -143,9 +165,17 @@ fakemontreal & 160 & 1800000.0 & 99.88647 & 0.00274 \\[1ex]
 
 
 \section{Conclusion}
-%The intersection of quantum computing and drug discovery, as exemplified by the exploration of the hydroxyl cation (·OH) in this challenge, holds tremendous promise for advancing our understanding of molecular interactions and revolutionizing therapeutic development. The rapid progress in drug discovery heavily relies on cutting-edge technologies, and the integration of quantum computing with machine learning presents a transformative approach.
+The intersection of quantum computing and drug discovery, as exemplified by the exploration of the hydroxyl cation (·OH) in this challenge, holds tremendous promise for advancing our understanding of molecular interactions and revolutionizing therapeutic development. The rapid progress in drug discovery heavily relies on cutting-edge technologies, and the integration of quantum computing with machine learning presents a transformative approach.
 
-%The detailed examination of the hydroxyl cation's quantum mechanics has showcased its significance in pharmacology, not only as a pivotal molecule in drug interactions but also in influencing the effectiveness of various medications. Quantum computing provides a unique opportunity to overcome classical computational limitations, offering avenues to predict and comprehend molecular behaviors with unprecedented accuracy.
+In this project, the ground state energy of the hydroxyl cation is calculated from given Hamiltonian in different approaches. 
+
+Qiskit's VQE optimization functions with a fixed random circuit and ansatz with fixed arbitatry parameters such as iterations, seed and shots can achieve the score up to 48.76 out of 100. The duration of the calculation is unreasonably long. 
+
+Certain aspects need attention to optimize the accuracy of the algorithm. Ansatz should be designed in a way that hardware can efficiently perform with given Hamiltonian. Parameters should be adjusted and pruned for the optimal duration. Qubit mapping should be set based on noise information. Redistributing shots based on the coefficients of the Pauli strings minimizes the overall variance in results. 
+
+With refined circuit design and parameters, the optimal result of 99.89092 out of 100 is achieved with the best pulse duration of 96. 
+
+Quantum computing provides a unique opportunity to overcome classical computational limitations, offering avenues to predict and comprehend molecular behaviors with unprecedented accuracy.
 
 %The 2023 Challenge, focused on computing the ground state energy of the hydroxyl cation, encourages participants to explore innovative solutions. The emphasis on effective qubit mapping, co-designed hardware and software optimization, and the integration of AI/ML and scientific-based approaches highlights the multifaceted strategies needed for success in quantum simulations.
 
